@@ -5,21 +5,23 @@ RSpec.describe Cart, type: :model do
     it { is_expected.to validate_numericality_of(:total_price).is_greater_than_or_equal_to(0) }
   end
 
-  describe 'mark_as_abandoned' do
-    let(:shopping_cart) { create(:shopping_cart) }
+  describe '#update_summary!' do
+    let(:product) { create(:product, price: 20) }
+    let(:cart) { create(:cart, items: [build(:cart_item, product: product, quantity: 1)]) }
 
-    it 'marks the shopping cart as abandoned if inactive for a certain time' do
-      shopping_cart.update(last_interaction_at: 3.hours.ago)
-      expect { shopping_cart.mark_as_abandoned }.to change { shopping_cart.abandoned? }.from(false).to(true)
+    it 'updates the cart total price' do
+      cart.update_summary!
+      expect(cart.total_price).to eq(20)
     end
-  end
 
-  describe 'remove_if_abandoned' do
-    let(:shopping_cart) { create(:shopping_cart, last_interaction_at: 7.days.ago) }
+    it 'updates the cart abandoned status' do
+      cart.update_summary!
+      expect(cart.abandoned).to eq(false)
+    end
 
-    it 'removes the shopping cart if abandoned for a certain time' do
-      shopping_cart.mark_as_abandoned
-      expect { shopping_cart.remove_if_abandoned }.to change { Cart.count }.by(-1)
+    it 'updates the cart last interaction time' do
+      cart.update_summary!
+      expect(cart.last_interaction_at).to be_present
     end
   end
 end
