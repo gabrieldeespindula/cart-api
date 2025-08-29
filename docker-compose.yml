@@ -1,5 +1,3 @@
-version: '3'
-
 services:
     db:
         image: postgres:16-alpine
@@ -9,15 +7,37 @@ services:
         ports:
             - '5432:5432'
         volumes:
-            - postgres13:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql/data
     redis:
         image: redis:7.0.15-alpine
         ports:
         - '6379:6379'
         volumes:
-        - redis_data:/data  
+        - redis_data:/data
     web:
-        ## TODO
+        build: .
+        command: ./bin/rails server -b 0.0.0.0 -p 3000
+        volumes:
+            - .:/rails
+        ports:
+            - "3000:3000"
+        depends_on:
+            - db
+            - redis
+        environment:
+            - DATABASE_URL=postgresql://postgres:password@db:5432/store_development
+            - REDIS_URL=redis://redis:6379/0
+    sidekiq:
+        build: .
+        command: bundle exec sidekiq
+        volumes:
+            - .:/rails
+        depends_on:
+            - db
+            - redis
+        environment:
+            - DATABASE_URL=postgresql://postgres:password@db:5432/store_development
+            - REDIS_URL=redis://redis:6379/0
     test:
         build: .
         command: bundle exec rspec
@@ -25,9 +45,10 @@ services:
             - .:/rails
         depends_on:
             - db
-            - redis 
+            - redis
         environment:
-            - DATABASE_URL: postgresql://postgres:password@db:5432/myapp_test
-            - REDIS_URL: redis://redis:6379/0
+            - DATABASE_URL=postgresql://postgres:password@db:5432/store_test
+            - REDIS_URL=redis://redis:6379/0
 volumes:
-    postgres13:
+    postgres_data:
+    redis_data:
