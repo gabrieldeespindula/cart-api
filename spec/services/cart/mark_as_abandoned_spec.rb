@@ -1,10 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Cart::MarkAsAbandoned, type: :service do
+  include ActiveSupport::Testing::TimeHelpers
+
   describe '#call' do
+    before { freeze_time }
+
     context 'when there are abandonable carts' do
-      let!(:abandonable_cart) { create(:cart, abandoned: false, last_interaction_at: 4.hours.ago) }
-      let!(:active_cart) { create(:cart, abandoned: false, last_interaction_at: 2.hours.ago) }
+      let!(:abandonable_cart) { create(:cart, abandoned: false, last_interaction_at: 3.hours.ago - 1.second) }
+      let!(:active_cart) { create(:cart, abandoned: false, last_interaction_at: 3.hours.ago) }
       let!(:already_abandoned_cart) { create(:cart, abandoned: true, last_interaction_at: 4.hours.ago) }
 
 
