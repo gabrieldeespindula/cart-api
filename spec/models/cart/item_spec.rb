@@ -14,9 +14,7 @@ RSpec.describe Cart::Item, type: :model do
 
   describe 'callbacks' do
     describe '#update_cart_summary' do
-      before do
-        travel_to Time.parse('2023-01-08 19:28:00 -0300')
-      end
+      before { freeze_time }
 
       let(:cart) { create(:cart, abandoned: true, last_interaction_at: 1.minute.ago) }
       let(:product) { create(:product, price: 20) }
