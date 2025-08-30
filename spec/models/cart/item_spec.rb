@@ -67,16 +67,24 @@ RSpec.describe Cart::Item, type: :model do
       end
     end
 
-    describe '#set_total_price' do
+    describe '#copy_product_price' do
       let(:product) { create(:product, price: 20) }
 
       context 'when creating a cart item' do
         it 'sets the total price' do
+          cart_item = build(:cart_item, product:, quantity: 2)
+
+          cart_item.save!
+
+          expect(cart_item.total_price).to eq(40)
+        end
+
+        it 'sets the unit price' do
           cart_item = build(:cart_item, product:, quantity: 1)
 
           cart_item.save!
 
-          expect(cart_item.total_price).to eq(20)
+          expect(cart_item.unit_price).to eq(20)
         end
       end
 
@@ -87,6 +95,15 @@ RSpec.describe Cart::Item, type: :model do
           cart_item.update!(quantity: 3)
 
           expect(cart_item.total_price).to eq(60)
+        end
+
+        it 'updates the unit price' do
+          cart_item = create(:cart_item, product:, quantity: 1)
+          product.update(price: 30)
+
+          cart_item.update!(quantity: 2)
+
+          expect(cart_item.unit_price).to eq(30)
         end
       end
     end
