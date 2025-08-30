@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Cart, type: :model do
   describe 'validations' do
-    it { is_expected.to validate_numericality_of(:total_price).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:total_price).is_greater_than_or_equal_to(0).allow_nil }
   end
 
   describe '#update_summary!' do
