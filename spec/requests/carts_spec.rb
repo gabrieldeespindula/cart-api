@@ -151,7 +151,7 @@ RSpec.describe "/carts", type: :request do
   end
 
 
-  describe "POST /add_item" do
+  describe "POST /cart/add_item" do
     let(:product) { create(:product, price: 10.0) }
 
     context "with valid parameters" do
