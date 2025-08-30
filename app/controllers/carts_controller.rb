@@ -33,7 +33,7 @@ class CartsController < ApplicationController
 
     render json: @cart
   rescue ActiveRecord::RecordNotFound
-    render json: { error: "Produto não encontrado no carrinho" }, status: :not_found
+    render json: { error: "Product not found in cart" }, status: :not_found
   end
 
   private

@@ -286,7 +286,7 @@ RSpec.describe "/carts", type: :request do
         expect(response.content_type).to match(a_string_including("application/json"))
 
         json_response = JSON.parse(response.body)
-        expect(json_response['error']).to eq("Produto não encontrado no carrinho")
+        expect(json_response['error']).to eq("Product not found in cart")
       end
     end
   end
