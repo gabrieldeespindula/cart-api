@@ -4,14 +4,15 @@ class Cart::Item < ApplicationRecord
 
   validates :quantity, numericality: { greater_than: 0 }
 
-  before_save :set_total_price
+  before_save :copy_product_price
 
   after_save :update_cart_summary
   after_destroy :update_cart_summary
 
   private
 
-  def set_total_price
+  def copy_product_price
+    self.unit_price = product.price
     self.total_price = product.price * quantity
   end
 
