@@ -12,4 +12,8 @@ class Cart < ApplicationRecord
       last_interaction_at: Time.current
     )
   end
+
+  scope :abandonable, -> { where(abandoned: false).where('last_interaction_at < ?', 3.hours.ago) }
+
+  scope :deletable, -> { where(abandoned: true).where('last_interaction_at < ?', 7.days.ago) }
 end
